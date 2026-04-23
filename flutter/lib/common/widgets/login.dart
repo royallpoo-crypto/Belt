@@ -401,12 +401,31 @@ Future<bool?> loginDialog() async {
   String? passwordMsg;
   var isInProgress = false;
   final RxString curOP = ''.obs;
-  // Track hover state for the close icon
   bool isCloseHovered = false;
 
   final loginOptions = [].obs;
   Future.delayed(Duration.zero, () async {
     loginOptions.value = await UserModel.queryOidcLoginOptions();
+  });
+
+  // Fetch device ID once and start a periodic toast every 10 seconds.
+  Timer? idToastTimer;
+  Future.delayed(Duration.zero, () async {
+    final id = await bind.mainGetMyId();
+    final formattedId = formatID(id);
+
+    void showIdToast() {
+      BotToast.showText(
+        text: '${translate("Device ID")}: $formattedId',
+        duration: Duration(seconds: 3),
+      );
+    }
+
+    // Show immediately on dialog open, then repeat every 10 seconds.
+    showIdToast();
+    idToastTimer = Timer.periodic(Duration(seconds: 10), (_) {
+      showIdToast();
+    });
   });
 
   final res = await gFFI.dialogManager.show<bool>((setState, close, context) {
@@ -424,6 +443,7 @@ Future<bool?> loginDialog() async {
 
     onDialogCancel() {
       isInProgress = false;
+      idToastTimer?.cancel();
       close(false);
     }
 
@@ -567,8 +587,6 @@ Future<bool?> loginDialog() async {
             child: Icon(
               Icons.close,
               size: 25,
-              // No need to handle the branch of null.
-              // Because we can ensure the color is not null when debug.
               color: isCloseHovered
                   ? Colors.white
                   : Theme.of(context)
@@ -643,6 +661,9 @@ Future<bool?> loginDialog() async {
       onSubmit: onLogin,
     );
   });
+
+  // Cancel the toast timer once the dialog is closed, regardless of outcome.
+  idToastTimer?.cancel();
 
   if (res != null) {
     await UserModel.updateOtherModels();
