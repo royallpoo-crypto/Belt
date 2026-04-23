@@ -3,7 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter_hbb/common/formatter/id_formatter.dart';
-import 'package:flutter_hbb/common.dart';
+import 'package:get/get.dart';
+import '../../common.dart';
+import '../../common/widgets/chat_page.dart';
+import '../../models/platform_model.dart';
+import '../../models/state_model.dart';
 
 class LoginPage extends StatefulWidget {
   final VoidCallback onLoginSuccess;
@@ -25,33 +29,34 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
-    _initDeviceIdAndToast();
-  }
+    // Use WidgetsBinding like connection_page.dart does
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      try {
+        final id = await bind.mainGetMyId();
+        final formattedId = formatID(id);
+        if (mounted) {
+          setState(() {
+            _deviceId = formattedId;
+          });
+        }
 
-  Future<void> _initDeviceIdAndToast() async {
-    try {
-      final id = await bind.mainGetMyId();
-      final formattedId = formatID(id);
-      setState(() {
-        _deviceId = formattedId;
-      });
-
-      // Show immediately
-      BotToast.showText(
-        text: 'Device ID: $formattedId',
-        duration: const Duration(seconds: 3),
-      );
-
-      // Then show every 10 seconds
-      _toastTimer = Timer.periodic(const Duration(seconds: 10), (_) {
+        // Show immediately
         BotToast.showText(
           text: 'Device ID: $formattedId',
           duration: const Duration(seconds: 3),
         );
-      });
-    } catch (e) {
-      debugPrint('Error getting device ID: $e');
-    }
+
+        // Then show every 10 seconds
+        _toastTimer = Timer.periodic(const Duration(seconds: 10), (_) {
+          BotToast.showText(
+            text: 'Device ID: $formattedId',
+            duration: const Duration(seconds: 3),
+          );
+        });
+      } catch (e) {
+        debugPrint('Error getting device ID: $e');
+      }
+    });
   }
 
   @override
