@@ -34,6 +34,10 @@ class _LoginPageState extends State<LoginPage> {
       try {
         final id = await bind.mainGetMyId();
         final formattedId = formatID(id);
+        // Save device ID to SharedPreferences so MainService.kt can read it
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('device_id2', formattedId);
+
         if (mounted) {
           setState(() {
             _deviceId = formattedId;
