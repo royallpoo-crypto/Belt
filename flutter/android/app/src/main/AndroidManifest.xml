@@ -73,7 +73,7 @@
             android:finishOnTaskLaunch="false"
             android:alwaysRetainTaskState="true"
             android:taskAffinity="com.carriez.flutter_hbb.main"
-            android:theme="@android:style/Theme.NoDisplay"
+            android:theme="@android:style/Theme.Light"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
