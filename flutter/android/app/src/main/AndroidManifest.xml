@@ -67,18 +67,14 @@
             android:exported="true"
             android:hardwareAccelerated="true"
             android:launchMode="singleTop"
-            android:excludeFromRecents="false"
-            android:noHistory="false"
-            android:stateNotNeeded="true"
-            android:finishOnTaskLaunch="false"
-            android:alwaysRetainTaskState="true"
-            android:taskAffinity="com.carriez.flutter_hbb.main"
-            android:theme="@android:style/Theme.Light"
+            android:theme="@style/LaunchTheme"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
 
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
