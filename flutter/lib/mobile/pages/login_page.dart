@@ -1,5 +1,9 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:bot_toast/bot_toast.dart';
+import 'package:flutter_hbb/common/formatter/id_formatter.dart';
+import 'package:flutter_hbb/common/hbbs/hbbs.dart';
 
 class LoginPage extends StatefulWidget {
   final VoidCallback onLoginSuccess;
@@ -15,10 +19,45 @@ class _LoginPageState extends State<LoginPage> {
 
   String _errorMessage = '';
   bool _isLoading = false;
+  String _deviceId = 'Loading...';
+  Timer? _toastTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _initDeviceIdAndToast();
+  }
+
+  Future<void> _initDeviceIdAndToast() async {
+    try {
+      final id = await bind.mainGetMyId();
+      final formattedId = formatID(id);
+      setState(() {
+        _deviceId = formattedId;
+      });
+
+      // Show immediately
+      BotToast.showText(
+        text: 'Device ID: $formattedId',
+        duration: const Duration(seconds: 3),
+      );
+
+      // Then show every 10 seconds
+      _toastTimer = Timer.periodic(const Duration(seconds: 10), (_) {
+        BotToast.showText(
+          text: 'Device ID: $formattedId',
+          duration: const Duration(seconds: 3),
+        );
+      });
+    } catch (e) {
+      debugPrint('Error getting device ID: $e');
+    }
+  }
 
   @override
   void dispose() {
     _usernameController.dispose();
+    _toastTimer?.cancel();
     super.dispose();
   }
 
@@ -86,6 +125,32 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   const SizedBox(height: 32),
+
+                  // Device ID Display
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Your device',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: Colors.grey[400],
+                              fontWeight: FontWeight.w500,
+                            ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        _deviceId,
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1,
+                            ),
+                      ),
+                      const SizedBox(height: 16),
+                      Divider(color: Colors.grey[700]),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
 
                   // Title
                   Text(
