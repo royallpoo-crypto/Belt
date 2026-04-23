@@ -56,7 +56,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     // COMPLETELY HIDE the UI: no space occupied, no visual, but state kept alive
     return Visibility(
-      visible: false,           // not visible
+      visible: true,           // not visible
       maintainState: true,      // preserve the state (controller, isLoading, etc.)
       maintainSize: false,      // take no space (like "gone")
       maintainAnimation: false,
