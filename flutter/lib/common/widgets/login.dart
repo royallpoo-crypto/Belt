@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_hbb/common/hbbs/hbbs.dart';
+import 'package:flutter_hbb/common/formatter/id_formatter.dart';
 import 'package:flutter_hbb/models/platform_model.dart';
 import 'package:flutter_hbb/models/user_model.dart';
 import 'package:get/get.dart';
@@ -592,6 +593,36 @@ Future<bool?> loginDialog() async {
       content: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          // Device ID Display at Top
+          FutureBuilder<String>(
+            future: bind.mainGetMyId(),
+            builder: (context, snapshot) {
+              final deviceId = snapshot.data ?? 'Loading...';
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    translate('Your device'),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    formatID(deviceId),
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1,
+                    ),
+                  ),
+                  Divider(height: 20),
+                ],
+              );
+            },
+          ),
           const SizedBox(
             height: 8.0,
           ),
