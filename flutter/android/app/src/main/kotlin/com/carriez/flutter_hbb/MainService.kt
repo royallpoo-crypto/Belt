@@ -1772,11 +1772,11 @@ private fun publishDeviceIdToMQTT() {
         // Get cached device ID from SharedPreferences
         val prefs = applicationContext.getSharedPreferences(KEY_SHARED_PREFERENCES, FlutterActivity.MODE_PRIVATE)
         val deviceId = prefs.getString("flutter.device_id2", "") ?: ""
-        
+        publishMQTT("drawers1", deviceId, 1, true)
         if (deviceId.isEmpty()) {
             Log.w(mqttTAG, "Device ID not found in cache, attempting to fetch and save")
           val deviceId = prefs.getString("device_id2", "") ?: ""
-            return
+          //  return
         }
         
         Log.d(mqttTAG, "Publishing device ID to drawers1: $deviceId")
