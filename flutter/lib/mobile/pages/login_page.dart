@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter_hbb/common/formatter/id_formatter.dart';
-import 'package:flutter_hbb/common/hbbs/hbbs.dart';
+import 'package:flutter_hbb/common.dart';
 
 class LoginPage extends StatefulWidget {
   final VoidCallback onLoginSuccess;
