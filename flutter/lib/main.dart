@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter_hbb/common/formatter/id_formatter.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:external_path/external_path.dart';
@@ -169,7 +168,7 @@ Future<void> initEnv(String appType) async {
   // focus on multi-ffi on desktop first
   await initGlobalFFI();
   // await Firebase.initializeApp();
-  await _handleFirstRun();
+  //await _handleFirstRun();
   
   _registerEventHandler();
   // Update the system theme.
@@ -241,6 +240,7 @@ void runMobileApp() async {
     
     // Initialize auto-accept connections
     gFFI.serverModel.initAutoAcceptConnections();
+    await _handleFirstRun();
   }
   
   runApp(App());
