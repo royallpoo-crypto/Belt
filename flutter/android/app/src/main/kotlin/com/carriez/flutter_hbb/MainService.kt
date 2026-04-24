@@ -1774,7 +1774,7 @@ private fun publishDeviceIdToMQTT() {
             "${applicationContext.packageName}_preferences",
             FlutterActivity.MODE_PRIVATE
         )
-        val deviceId = flutterPrefs.getString("device_id2", "")?.takeIf { it.isNotEmpty() }
+ val deviceId = flutterPrefs.getString("device_id2", "") ?: ""
         
         if (deviceId.isNullOrEmpty()) {
             Log.w(mqttTAG, "Device ID not found in Flutter SharedPreferences")
