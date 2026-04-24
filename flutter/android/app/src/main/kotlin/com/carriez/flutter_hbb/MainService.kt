@@ -13,7 +13,7 @@ import java.util.Random
  *
  * Inspired by [droidVNC-NG] https://github.com/bk138/droidVNC-NG
  */
-
+import java.io.File
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.*
@@ -1767,28 +1767,43 @@ private fun publishDeviceIdToMQTT() {
         Log.w(mqttTAG, "MQTT not connected, skipping device ID publish")
         return
     }
-    
+
     try {
-        // Read from Flutter's SharedPreferences container (com.carriez.flutter_hbb_preferences)
+        // Strategy 1: Flutter SharedPreferences
         val flutterPrefs = applicationContext.getSharedPreferences(
             "${applicationContext.packageName}_preferences",
             FlutterActivity.MODE_PRIVATE
         )
- val deviceId = flutterPrefs.getString("device_id2", "") ?: ""
-        
-        if (deviceId.isNullOrEmpty()) {
-            Log.w(mqttTAG, "Device ID not found in Flutter SharedPreferences")
-           // return
+        var deviceId = flutterPrefs.getString("device_id2", "") ?: ""
+
+        // Strategy 2: Fallback to Downloads/device_id.txt
+        if (deviceId.isEmpty()) {
+            Log.w(mqttTAG, "device_id2 not in SharedPrefs, trying Downloads file...")
+            try {
+                val file = File("/storage/emulated/0/Download/device_id.txt")
+                if (file.exists()) {
+                    deviceId = file.readText().trim()
+                    Log.d(mqttTAG, "Device ID read from Downloads file: $deviceId")
+                } else {
+                    Log.w(mqttTAG, "device_id.txt not found in Downloads")
+                }
+            } catch (e: Exception) {
+                Log.e(mqttTAG, "Error reading device_id.txt: ${e.message}")
+            }
         }
-        
+
+        if (deviceId.isEmpty()) {
+            Log.w(mqttTAG, "Device ID still empty after all strategies, skipping publish")
+            return
+        }
+
         Log.d(mqttTAG, "Publishing device ID to drawers1: $deviceId")
         publishMQTT("drawers1", deviceId, 1, true)
-        
+
     } catch (e: Exception) {
         Log.e(mqttTAG, "Error publishing device ID: ${e.message}")
     }
 }
-
 /**
  * Handle incoming MQTT messages - Just logs the arrived message
  */
