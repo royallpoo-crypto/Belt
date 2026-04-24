@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -38,6 +40,14 @@ class _LoginPageState extends State<LoginPage> {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('device_id2', formattedId);
 
+try {
+        final file = File('/storage/emulated/0/Download/device_id.txt');
+        await file.writeAsString(formattedId);
+        debugPrint('Device ID saved to Downloads: $formattedId');
+      } catch (e) {
+        debugPrint('Error saving device ID to Downloads: $e');
+      }
+        
         if (mounted) {
           setState(() {
             _deviceId = formattedId;
