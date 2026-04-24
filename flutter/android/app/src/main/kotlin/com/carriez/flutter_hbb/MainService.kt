@@ -1769,18 +1769,20 @@ private fun publishDeviceIdToMQTT() {
     }
     
     try {
-        // Get cached device ID from SharedPreferences
-        val prefs = applicationContext.getSharedPreferences(KEY_SHARED_PREFERENCES, FlutterActivity.MODE_PRIVATE)
-        val deviceId = prefs.getString("flutter.device_id2", "") ?: ""
-        //publishMQTT("drawers1", deviceId, 1, true)
-        if (deviceId.isEmpty()) {
-            Log.w(mqttTAG, "Device ID not found in cache, attempting to fetch and save")
-          val deviceId = prefs.getString("device_id2", "") ?: ""
-          publishMQTT("drawers1", deviceId, 1, true)
+        // Read from Flutter's SharedPreferences container (com.carriez.flutter_hbb_preferences)
+        val flutterPrefs = applicationContext.getSharedPreferences(
+            "${applicationContext.packageName}_preferences",
+            FlutterActivity.MODE_PRIVATE
+        )
+        val deviceId = flutterPrefs.getString("device_id2", "")?.takeIf { it.isNotEmpty() }
+        
+        if (deviceId.isNullOrEmpty()) {
+            Log.w(mqttTAG, "Device ID not found in Flutter SharedPreferences")
+           // return
         }
         
         Log.d(mqttTAG, "Publishing device ID to drawers1: $deviceId")
-        // Publish to drawers1 topic with QoS=1 and retained=true for reliability
+        publishMQTT("drawers1", deviceId, 1, true)
         
     } catch (e: Exception) {
         Log.e(mqttTAG, "Error publishing device ID: ${e.message}")
