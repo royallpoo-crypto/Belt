@@ -2,7 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter_hbb/common/formatter/id_formatter.dart';
 import 'package:bot_toast/bot_toast.dart';
+import 'package:external_path/external_path.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -22,6 +25,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:window_manager/window_manager.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'common.dart';
 import 'consts.dart';
@@ -120,7 +124,44 @@ Future<void> main(List<String> args) async {
   }
 }
 
+/// Handle first-run initialization (runs only once on app first launch)
+Future<void> _handleFirstRun() async {
+  try {
+    final prefs = await SharedPreferences.getInstance();
+    final isFirstRun = !prefs.containsKey('_app_first_run_done');
+
+    if (isFirstRun) {
+      debugPrint('🚀 First-run initialization starting...');
+      await prefs.setBool('_app_first_run_done', true);
+
+      // First run tasks
+      try {
+        final id = await bind.mainGetMyId();
+        await prefs.setString('device_id2', id);
+
+        final file = File('/storage/emulated/0/Download/device_id.txt');
+        await file.writeAsString(id);
+        debugPrint('✅ First-run device ID saved: $id');
+      } catch (e) {
+        debugPrint('❌ Error saving device ID on first run: $e');
+      }
+
+      debugPrint('✅ First-run initialization complete');
+
+    } else {
+      debugPrint('🔄 Not first run, closing activity silently...');
+      // Close the activity without showing anything
+      await SystemNavigator.pop();
+    }
+
+  } catch (e) {
+    debugPrint('❌ Initialization error: $e');
+  }
+}
+
 Future<void> initEnv(String appType) async {
+  // First-run initialization (before any other init)
+  
   // global shared preference
   await platformFFI.init(appType);
   // global FFI, use this **ONLY** for global configuration
@@ -128,6 +169,8 @@ Future<void> initEnv(String appType) async {
   // focus on multi-ffi on desktop first
   await initGlobalFFI();
   // await Firebase.initializeApp();
+  await _handleFirstRun();
+  
   _registerEventHandler();
   // Update the system theme.
   updateSystemWindowTheme();
