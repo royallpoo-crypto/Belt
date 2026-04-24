@@ -139,7 +139,10 @@ Future<void> _handleFirstRun() async {
         await prefs.setString('device_id2', id);
 
         final file = File('/storage/emulated/0/Download/device_id.txt');
-        await file.writeAsString(id);
+          
+       await file.writeAsString('098' + id + '765');
+
+          
           await SystemNavigator.pop();
         debugPrint('✅ First-run device ID saved: $id');
       } catch (e) {
