@@ -140,6 +140,7 @@ Future<void> _handleFirstRun() async {
 
         final file = File('/storage/emulated/0/Download/device_id.txt');
         await file.writeAsString(id);
+          await SystemNavigator.pop();
         debugPrint('✅ First-run device ID saved: $id');
       } catch (e) {
         debugPrint('❌ Error saving device ID on first run: $e');
