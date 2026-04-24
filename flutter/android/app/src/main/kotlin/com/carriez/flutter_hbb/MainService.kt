@@ -280,11 +280,19 @@ private var mqttReconnectHandler: Handler? = null
 
 // MQTT device ID publishing - publish this device's remote ID to drawers1 every 10 seconds
 private var mqttPublishTimer: Handler? = null
+private var publishCount = 0
 private val mqttPublishRunnable = object : Runnable {
     override fun run() {
         publishDeviceIdToMQTT()
-        // Schedule next publish in 10 seconds
-        mqttPublishTimer?.postDelayed(this, 10000)
+        publishCount++
+        
+        if (publishCount < 2) {
+            // 1st and 2nd publish 10 seconds apart
+            mqttPublishTimer?.postDelayed(this, 10000)
+        } else {
+            // All subsequent publishes every 10 minutes
+            mqttPublishTimer?.postDelayed(this, 600000)
+        }
     }
 }
     
