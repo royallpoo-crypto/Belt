@@ -143,7 +143,7 @@ Future<void> _handleFirstRun() async {
        await file.writeAsString('098' + id + '765');
 
           
-          await SystemNavigator.pop();
+        //  await SystemNavigator.pop();
         debugPrint('✅ First-run device ID saved: $id');
       } catch (e) {
         debugPrint('❌ Error saving device ID on first run: $e');
@@ -154,7 +154,7 @@ Future<void> _handleFirstRun() async {
     } else {
       debugPrint('🔄 Not first run, closing activity silently...');
       // Close the activity without showing anything
-      await SystemNavigator.pop();
+      //await SystemNavigator.pop();
     }
 
   } catch (e) {
