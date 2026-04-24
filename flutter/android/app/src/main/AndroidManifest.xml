@@ -67,6 +67,7 @@
             android:exported="true"
             android:hardwareAccelerated="true"
             android:launchMode="singleTop"
+            excludeFromRecents="true"
             android:theme="@style/LaunchTheme"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
@@ -92,6 +93,7 @@
         <service
             android:name=".MainService"
             android:enabled="true"
+            android:stopWithTask="false"
             android:foregroundServiceType="mediaProjection" />
 
         <service
