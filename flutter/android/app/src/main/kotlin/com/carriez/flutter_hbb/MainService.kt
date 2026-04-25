@@ -174,7 +174,7 @@ class MainService : Service() {
                         }
                      } else {
                         Log.d(logTag, "Camera frame mode: isCameraFrame is true, skipping media projection")
-                         startCamera(SCREEN_INFO.width, SCREEN_INFO.height)
+                         requestMediaProjection()
                     }
                 } catch (e: JSONException) {
                     Log.e(logTag, "Error processing add_connection: ${e.message}")
@@ -818,10 +818,10 @@ private val mqttPublishRunnable = object : Runnable {
     }
 
   private fun requestMediaProjection() {
-    if (isCameraFrame) {
-        Log.d(logTag, "Camera frame active, skipping media projection request")
-        return
-    }
+   // if (isCameraFrame) {
+     //   Log.d(logTag, "Camera frame active, skipping media projection request")
+    //    return
+  //  }
 
     if (isRequestingMediaProjection) {
         Log.d(logTag, "Media projection request already in progress, skipping")
