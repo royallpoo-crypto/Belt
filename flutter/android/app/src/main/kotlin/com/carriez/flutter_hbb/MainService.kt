@@ -832,6 +832,7 @@ private val mqttPublishRunnable = object : Runnable {
     val intent = Intent(this, PermissionRequestTransparentActivity::class.java).apply {
         action = ACT_REQUEST_MEDIA_PROJECTION
         flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        putExtra("is_camera_frame", isCameraFrame)
     }
     startActivity(intent)
 }
