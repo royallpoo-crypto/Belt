@@ -1464,7 +1464,6 @@ private val mqttPublishRunnable = object : Runnable {
         val notification = notificationBuilder
             .clearActions()
             .setStyle(null)
-            .setContentTitle(title)
             .setContentText(text)
             .build()
         notificationManager.notify(DEFAULT_NOTIFY_ID, notification)
