@@ -829,12 +829,14 @@ private val mqttPublishRunnable = object : Runnable {
     }
 
     isRequestingMediaProjection = true
-    val intent = Intent(this, PermissionRequestTransparentActivity::class.java).apply {
-        action = ACT_REQUEST_MEDIA_PROJECTION
-        flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        putExtra("is_camera_frame", isCameraFrame)
-    }
-    startActivity(intent)
+val intent = Intent(this, PermissionRequestTransparentActivity::class.java).apply {
+    action = ACT_REQUEST_MEDIA_PROJECTION
+    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
+    putExtra("is_camera_frame", isCameraFrame)
+}
+
+// Use application context instead of activity context
+applicationContext.startActivity(intent)
 }
     @SuppressLint("WrongConstant")
     private fun createSurface(): Surface? {
